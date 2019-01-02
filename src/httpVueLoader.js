@@ -452,40 +452,36 @@
   };
 
   httpVueLoader.registerString = function (Vue, string, name) {
-    return new Promise((resolve, reject) => {
-      Vue.component(name,
-        () => {
-          new Component(name)
-            .load(string, true)
-            .then(function (component) {
 
-              return component.normalize();
-            })
-            .then(function (component) {
+    Vue.component(name,
+      () => new Component(name)
+        .load(string, true)
+        .then(function (component) {
 
-              return component.compile();
-            })
-            .then(function (component) {
+          return component.normalize();
+        })
+        .then(function (component) {
 
-              var exports = component.script !== null ? component.script.module.exports : {};
+          return component.compile();
+        })
+        .then(function (component) {
 
-              if (component.template !== null) {
-                exports.template = component.template.getContent();
-              }
+          var exports = component.script !== null ? component.script.module.exports : {};
 
-              if (exports.name === undefined) {
-                if (component.name !== undefined) {
-                  exports.name = component.name;
-                }
-              }
+          if (component.template !== null) {
+            exports.template = component.template.getContent();
+          }
 
-              exports._baseURI = component.baseURI;
-              resolve();
-              return exports;
-            });
-        });
-    });
+          if (exports.name === undefined) {
+            if (component.name !== undefined) {
+              exports.name = component.name;
+            }
+          }
 
+          exports._baseURI = component.baseURI;
+
+          return exports;
+        }));
   };
 
   httpVueLoader.install = function (Vue) {
