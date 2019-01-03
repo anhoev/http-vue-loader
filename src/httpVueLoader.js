@@ -330,6 +330,8 @@
             var lang = eltCx.elt.getAttribute('lang');
             eltCx.elt.removeAttribute('lang');
             return httpVueLoader.langProcessor[lang.toLowerCase()].call(this, content === null ? eltCx.getContent() : content);
+          } else if (eltCx.elt.tagName.toLowerCase()==='script' && httpVueLoader.langProcessor.hasOwnProperty('es6')) {
+            return httpVueLoader.langProcessor['es6'].call(this, content === null ? eltCx.getContent() : content);
           }
           return content;
         }.bind(this))
@@ -541,7 +543,7 @@
 
   httpVueLoader.langProcessor = {
     html: identity,
-    js: identity,
+    js: value => 'es6',
     css: identity
   };
 
