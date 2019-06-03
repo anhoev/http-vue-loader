@@ -580,8 +580,8 @@
 
   httpVueLoader.transformCode = function (string) {
     console.log(string);
-    return new Component()
-    .load(string, true)
+    const component = new Component().load(string, true);
+    return Promise.resolve(component)
     .then(component => component.normalize())
     .then(function (res) {
       let newVue = '';
