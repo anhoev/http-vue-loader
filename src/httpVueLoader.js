@@ -475,38 +475,30 @@
   }
 
   httpVueLoader.registerString = function (Vue, string, name) {
-
-    Vue.component(name,
-      () => {
-        return Promise.resolve(new Component(name)
-        .load(string, true))
-        .then(function (component) {
-
-          return component.normalize();
-        })
-        .then(function (component) {
-
-          return component.compile();
-        })
-        .then(function (component) {
-
-          var exports = component.script !== null ? component.script.module.exports : {};
-
-          if (component.template !== null) {
-            exports.template = component.template.getContent();
-          }
-
-          if (exports.name === undefined) {
-            if (component.name !== undefined) {
-              exports.name = component.name;
-            }
-          }
-
-          exports._baseURI = component.baseURI;
-
-          return exports;
-        });
-      });
+    Promise.resolve(new Component(name)
+    .load(string, true))
+    .then(function (component) {
+      return component.normalize();
+    })
+    .then(function (component) {
+      return component.compile();
+    })
+    .then(function (component) {
+      var exports = component.script !== null ? component.script.module.exports : {};
+      if (component.template !== null) {
+        exports.template = component.template.getContent();
+      }
+      if (exports.name === undefined) {
+        if (component.name !== undefined) {
+          exports.name = component.name;
+        }
+      }
+      exports._baseURI = component.baseURI;
+      return exports;
+    })
+    .then(component => {
+      Vue.component(name, component);
+    });
   };
 
   httpVueLoader.install = function (Vue) {
